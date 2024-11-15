@@ -17,7 +17,7 @@ export default StyleSheet.create({
         color: '#2C5DD1',
       },
       placeholderText: {
-        color: 'lightgrey',
+        color: 'grey',
       },
       hiddenPicker: {
         position: 'absolute',

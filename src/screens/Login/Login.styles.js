@@ -4,9 +4,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 const styles = StyleSheet.create({
   container: {
     width: wp('100%'),
-    height: hp('100%'),
     padding:'7%',
-    backgroundColor:'white'
+    backgroundColor:'white',
   },
   textInput: {
     backgroundColor:'transparent',

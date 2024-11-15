@@ -80,7 +80,7 @@ const Profile = () => {
           </View>
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{color: 'black', fontSize: 17}}>{User?.fullname}</Text>
-            <Text style={{color: '#C8C5C5', fontSize: 11}}>{User?.email}</Text>
+            <Text style={{color: 'grey', fontSize: 11}}>{User?.email}</Text>
           </View>
         </View>
         <View>
@@ -88,8 +88,8 @@ const Profile = () => {
             initialValues={{
               fullname: '',
               phone: '',
-              gender: setSelectedValue,
-              date: setDate,
+              gender: selectedValue,
+              date: date,
             }}
             validationSchema={validationSchema}
             onSubmit={data => handleUpdate(data)}>
@@ -167,6 +167,8 @@ const Profile = () => {
                       <Picker.Item label="Male" value="Male" />
                       <Picker.Item label="Female" value="Female" />
                     </Picker>
+                  </View>
+                  <View>
                     {errors.gender && touched.gender ? (
                       <View>
                         <Text
@@ -188,8 +190,8 @@ const Profile = () => {
                       onPress={() => setOpen(true)}>
                       <Text style={style.buttonText}>
                         {!date
-                          ? 'Select Date'
-                          : `Selected Date: ${date.toDateString()}`}
+                          ? 'Select DOB'
+                          : `Date of Birth : ${date.toDateString()}`}
                       </Text>
                     </TouchableOpacity>
                     <DatePicker
@@ -221,6 +223,7 @@ const Profile = () => {
                     ) : null}
                   </View>
                 </View>
+                <View></View>
                 <Pressable style={styles.loginButton} onPress={handleSubmit}>
                   <Text
                     style={{

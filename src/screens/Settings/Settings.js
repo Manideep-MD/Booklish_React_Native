@@ -151,7 +151,7 @@ const Settings = () => {
             <Text style={{fontSize: 17, color: 'white', fontFamily: 'serif'}}>
               {User?.fullname}
             </Text>
-            <Text style={{fontSize: 10}}>{User?.email}</Text>
+            <Text style={{fontSize: 12,color:'lightgrey'}}>{User?.email}</Text>
           </View>
           <TouchableOpacity onPress={handleProfile}>
             <EditIcon name="account-edit-outline" size={27} color="white" />
@@ -192,7 +192,7 @@ const Settings = () => {
                       <View
                         style={{
                           width: 40,
-                          height: 35,
+                          height: 40,
                           backgroundColor: '#F3F3F3',
                           justifyContent: 'center',
                           alignItems: 'center',
@@ -252,7 +252,7 @@ const Settings = () => {
                       <View
                         style={{
                           width: 40,
-                          height: 35,
+                          height: 40,
                           backgroundColor: '#F3F3F3',
                           justifyContent: 'center',
                           alignItems: 'center',

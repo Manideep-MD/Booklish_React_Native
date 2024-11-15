@@ -267,8 +267,8 @@ const SearchBooks = () => {
           }
         />
       </View>
-     {bookData.length === 0 && <View style={{position:'absolute',top:'50%',left:'25%',backgroundColor:'#2C5DD1',width:'50%',height:50,justifyContent:'center',alignItems:'center',borderRadius:30}}>
-         <Text style={{color:'white',fontSize:18,fontFamily:'serif',fontWeight:'bold'}}>No Data Found</Text>
+     {bookData.length === 0 && !showLoader && <View style={{position:'absolute',top:'50%',left:'30%',backgroundColor:'#2C5DD1',width:'40%',height:50,justifyContent:'center',alignItems:'center',borderRadius:30}}>
+         <Text style={{color:'white',fontSize:13,fontFamily:'serif',fontWeight:'bold'}}>No Data Found</Text>
       </View>}
       {showLoader && <Loader />}
     </SafeAreaView>

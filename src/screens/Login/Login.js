@@ -25,10 +25,24 @@ import {useDispatch} from 'react-redux';
 import {SET_USER_DATA} from '../../Redux/UserDetails';
 import {Formik} from 'formik';
 import * as Yup from 'yup';
-import { emailRegex } from '../../Utils/Validations/Validations';
+import {emailRegex} from '../../Utils/Validations/Validations';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+import Loader from '../../components/Loader/Loader';
+import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
+// import firebase from '@react-native-firebase/app';
+
+GoogleSignin.configure({
+  webClientId:
+    '749928924796-92dp1d37f7tqpnuc058mcm0m2jt38so2.apps.googleusercontent.com', // Use Web Client ID
+});
 
 const Login = () => {
   const [show, setShow] = useState(true);
+  const [loading, setLoading] = useState(false);
   const focus = useIsFocused();
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -37,25 +51,46 @@ const Login = () => {
     setShow(true);
   }, [focus]);
 
-  const handleLogin = async (data) => {
-      try {
-        const payload = {
-          email: data?.email,
-          password: data?.password,
-        };
-        const response = await User_Login(payload);
-        if (response && response.status === 200) {
-          console.log(response.data,"data=========>")
-          dispatch(SET_USER_DATA(response.data.user));
-          Toast.show(response.data.message, 2, Toast.CENTER);
-          navigation.navigate('homeScreen');
-        } else {
-          console.log('Error while creating user', error);
-        }
-      } catch (error) {
-        // console.log("Error:",error.response.data.message)
-        Toast.showWithGravity(error.response.data.message, 2, Toast.BOTTOM);
+  // useEffect(() => {
+
+  // }, []);
+
+  // useEffect(() => {
+  //   // Check if the user is already signed in
+  //   const checkUser = async () => {
+  //     const isSignedIn = await GoogleSignin.isSignedIn();
+  //     if (isSignedIn) {
+  //       const currentUser = await GoogleSignin.signInSilently();
+  //       setUser(currentUser);
+  //     }
+  //   };
+
+  //   checkUser();
+  // }, []);
+
+  //   if (!firebase.apps.length) {
+  //     firebase.initializeApp();
+  // }
+
+  const handleLogin = async data => {
+    try {
+      const payload = {
+        email: data?.email,
+        password: data?.password,
+      };
+      const response = await User_Login(payload);
+      if (response && response.status === 200) {
+        console.log(response.data, 'data=========>');
+        dispatch(SET_USER_DATA(response.data.user));
+        Toast.show(response.data.message, 2, Toast.CENTER);
+        navigation.navigate('homeScreen');
+      } else {
+        console.log('Error while creating user', error);
       }
+    } catch (error) {
+      // console.log("Error:",error.response.data.message)
+      Toast.showWithGravity(error.response.data.message, 2, Toast.BOTTOM);
+    }
   };
 
   const validationSchema = Yup.object().shape({
@@ -76,9 +111,75 @@ const Login = () => {
     navigation.navigate('register');
   };
 
+  const onGoogleButtonPress = async () => {
+    try {
+      setLoading(true)
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      // Get the users ID token
+      const signInResult = await GoogleSignin.signIn();
+
+      // Try the new style of google-sign in result, from v13+ of that module
+      idToken = signInResult.data?.idToken;
+      if (!idToken) {
+        // if you are using older versions of google-signin, try old style result
+        idToken = signInResult.idToken;
+      }
+
+      // If idToken is missing, log an error and handle it
+      if (!idToken) {
+        console.error('No idToken received');
+        throw new Error('No idToken received');
+      }
+
+      // Authenticate with Firebase using the idToken
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
+      const firebaseResult = await auth().signInWithCredential(
+        googleCredential,
+      );
+      dispatch(SET_USER_DATA(firebaseResult.user));
+      navigation.navigate('homeScreen');
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('User cancelled the login');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('Sign-in in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('Play services not available');
+      } else {
+        console.log(error.message);
+      }
+    }finally{
+       setLoading(false)
+    }
+  };
+
+  const onFacebookButtonPress = async() => {
+    // Attempt login with permissions
+    const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+  
+    if (result.isCancelled) {
+      throw 'User cancelled the login process';
+    }
+  
+    // Once signed in, get the users AccessToken
+    const data = await AccessToken.getCurrentAccessToken();
+  
+    if (!data) {
+      throw 'Something went wrong obtaining access token';
+    }
+  
+    // Create a Firebase credential with the AccessToken
+    const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(facebookCredential);
+    
+  }
+
   return (
     <ScrollView style={{flex: 1}}>
-      <View style={styles.container}>
+ 
+     <View style={styles.container}>
         <View
           style={{
             justifyContent: 'center',
@@ -111,8 +212,8 @@ const Login = () => {
             password: '',
           }}
           validationSchema={validationSchema}
-          onSubmit={(data) => handleLogin(data)}>
-          {({errors, handleSubmit,values,handleChange,touched}) => (
+          onSubmit={data => handleLogin(data)}>
+          {({errors, handleSubmit, values, handleChange, touched}) => (
             <View style={styles.inputContainer}>
               <View style={{gap: 13}}>
                 <SafeAreaView>
@@ -126,11 +227,17 @@ const Login = () => {
                   />
                   {errors.email && touched.email ? (
                     <View>
-                      <Text style={{color: 'red', fontSize: 10,paddingLeft:20,fontFamily:'serif'}}>
+                      <Text
+                        style={{
+                          color: 'red',
+                          fontSize: 10,
+                          paddingLeft: 20,
+                          fontFamily: 'serif',
+                        }}>
                         {errors.email}
                       </Text>
-                    </View> 
-                  ): null}
+                    </View>
+                  ) : null}
                 </SafeAreaView>
 
                 <SafeAreaView>
@@ -158,12 +265,20 @@ const Login = () => {
                   </TouchableOpacity>
                 </SafeAreaView>
                 {errors.password && touched.password ? (
-                    <View>
-                      <Text style={{color: 'red', fontSize: 10,paddingLeft:18,position:'absolute',bottom:1,fontFamily:'serif'}}>
-                        {errors.password}
-                      </Text>
-                    </View>
-                  ):null}
+                  <View>
+                    <Text
+                      style={{
+                        color: 'red',
+                        fontSize: 10,
+                        paddingLeft: 18,
+                        position: 'absolute',
+                        bottom: 1,
+                        fontFamily: 'serif',
+                      }}>
+                      {errors.password}
+                    </Text>
+                  </View>
+                ) : null}
               </View>
 
               <View
@@ -238,21 +353,27 @@ const Login = () => {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-evenly',
-            paddingTop:12
+            paddingTop: 12,
           }}>
-          <TouchableOpacity style={styles.logo}>
+          <TouchableOpacity style={styles.logo} onPress={() => onFacebookButtonPress()}>
             <Image style={styles.tinyLogo} source={facebook} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.logo}>
+          <TouchableOpacity style={styles.logo} onPress={onGoogleButtonPress}>
             <Image style={styles.tinyLogo} source={google} />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logo}>
             <Image style={styles.tinyLogo} source={git} />
           </TouchableOpacity>
+
+          {/* <Pressable onPress={handleSignout}>
+            <Text>Sign out</Text>
+          </Pressable> */}
         </View>
+        {loading && <Loader/>}
       </View>
+
     </ScrollView>
   );
 };

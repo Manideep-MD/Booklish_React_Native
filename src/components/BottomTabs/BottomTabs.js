@@ -16,12 +16,10 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import FlashSale from '../../screens/FlashSale/FlashSale';
 import {CommonActions} from '@react-navigation/native';
 import Login from '../../screens/Login/Login';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 import UserIcon from 'react-native-vector-icons/FontAwesome5';
 import Profile from '../../screens/Profile/Profile';
 import Settings from '../../screens/Settings/Settings';
-
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -36,7 +34,7 @@ function Home() {
 }
 
 const BottomTabs = () => {
-  const User = useSelector((state) => state.UserDetails.userData)
+  const User = useSelector(state => state.UserDetails.userData);
 
   return (
     <Tab.Navigator
@@ -47,7 +45,7 @@ const BottomTabs = () => {
         tabBarStyle: {
           backgroundColor: '#2C5DD1',
           paddingTop: 10,
-          height:50
+          height: 50,
           // borderColor: '#0D689E',
         }, // Inactive icon color
       }}>
@@ -60,7 +58,7 @@ const BottomTabs = () => {
           tabBarIcon: ({focused}) => (
             <View
               style={{
-                backgroundColor:focused ? 'white' : '#2C5DD1',
+                backgroundColor: focused ? 'white' : '#2C5DD1',
                 width: 40,
                 height: 39,
                 borderRadius: 50,
@@ -75,12 +73,12 @@ const BottomTabs = () => {
               />
             </View>
           ),
-          tabBarActiveTintColor: 'white', // Set label color when active
-          tabBarInactiveTintColor: 'gray', // Set label color when inactive
+          tabBarActiveTintColor: 'white', 
+          tabBarInactiveTintColor: 'gray', 
         }}
         listeners={({navigation}) => ({
           tabPress: e => {
-            e.preventDefault(); // Prevent default action
+            e.preventDefault(); 
             // navigation.navigate('home'); // Navigate to home screen
             navigation.navigate('homeScreen', {screen: 'home'});
           },
@@ -94,24 +92,25 @@ const BottomTabs = () => {
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({focused}) => (
-            <View  style={{
-              backgroundColor:focused ? 'white' : '#2C5DD1',
-              width: 40,
-              height: 39,
-              borderRadius: 50,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 2.5,
-            }}>
-            <Search
-            name="search"
-            color={focused ? '#2C5DD1' : 'lightgrey'}
-            size={20}
-            />
+            <View
+              style={{
+                backgroundColor: focused ? 'white' : '#2C5DD1',
+                width: 40,
+                height: 39,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 2.5,
+              }}>
+              <Search
+                name="search"
+                color={focused ? '#2C5DD1' : 'lightgrey'}
+                size={20}
+              />
             </View>
           ),
-          tabBarActiveTintColor: 'white', // Set label color when active
-          tabBarInactiveTintColor: 'gray', // Set label color when inactive
+          tabBarActiveTintColor: 'white', 
+          tabBarInactiveTintColor: 'gray', 
         }}
         listeners={({navigation, route}) => ({
           tabPress: e => {
@@ -122,41 +121,48 @@ const BottomTabs = () => {
       />
 
       <Tab.Screen
-        name={Object.keys(User).length > 0 ? "settings":"login"}
-        component={Object.keys(User).length > 0 ? Settings:Login}
+        name={Object.keys(User).length > 0 ? 'settings' : 'login'}
+        component={Object.keys(User).length > 0 ? Settings : Login}
         options={{
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({focused}) => (
-            <View style={{
-              backgroundColor:focused ? 'white' : '#2C5DD1',
-              width: 40,
-              height: 39,
-              borderRadius: 50,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: 2.5,
-            }}>
-           {Object.keys(User).length > 0 ? 
-            <UserIcon name="user"
-              color={focused ? '#2C5DD1' : 'lightgrey'}
-              size={20}/> :  
-              <Icon
-              name="login"
-              color={focused ? '#2C5DD1' : 'lightgrey'}
-              size={20}
-            />}
+            <View
+              style={{
+                backgroundColor: focused ? 'white' : '#2C5DD1',
+                width: 40,
+                height: 39,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 2.5,
+              }}>
+              {Object.keys(User).length > 0 ? (
+                <UserIcon
+                  name="user"
+                  color={focused ? '#2C5DD1' : 'lightgrey'}
+                  size={20}
+                />
+              ) : (
+                <Icon
+                  name="login"
+                  color={focused ? '#2C5DD1' : 'lightgrey'}
+                  size={20}
+                />
+              )}
             </View>
           ),
-          tabBarActiveTintColor: 'white', 
-          tabBarInactiveTintColor: 'gray', 
+          tabBarActiveTintColor: 'white',
+          tabBarInactiveTintColor: 'gray',
         }}
         listeners={({navigation}) => ({
           tabPress: () => {
             navigation.dispatch(
               CommonActions.reset({
                 index: 0,
-                routes: [{name:Object.keys(User).length > 0 ? 'settings':'login'}],
+                routes: [
+                  {name: Object.keys(User).length > 0 ? 'settings' : 'login'},
+                ],
               }),
             );
           },
@@ -170,13 +176,18 @@ const BottomTabs = () => {
           headerShown: false,
           tabBarLabel: '',
           tabBarIcon: ({focused}) => (
-            <View style={{display: 'flex', flexDirection: 'row' ,backgroundColor:focused ? 'white' : '#2C5DD1',
-            width: 40,
-            height: 39,
-            borderRadius: 50,
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: 2.5}}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                backgroundColor: focused ? 'white' : '#2C5DD1',
+                width: 40,
+                height: 39,
+                borderRadius: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 2.5,
+              }}>
               <CartIcon
                 name="cart-shopping"
                 color={focused ? '#2C5DD1' : 'lightgrey'}
@@ -188,7 +199,7 @@ const BottomTabs = () => {
                   bottom: 21,
                   left: 21,
                   backgroundColor: focused ? 'red' : 'white',
-                  color: focused ?'white' : '#2C5DD1',
+                  color: focused ? 'white' : '#2C5DD1',
                 }}
                 size={15}>
                 3

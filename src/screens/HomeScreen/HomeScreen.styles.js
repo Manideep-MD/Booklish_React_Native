@@ -16,7 +16,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 13,
     paddingTop: 23,
-    paddingBottom:10
+    paddingBottom:8
   },
   headerContent: {
     flexDirection: 'row',
@@ -24,7 +24,7 @@ export default StyleSheet.create({
     gap: 12,
   },
   greetingText: {
-    fontSize: 15,
+    fontSize: 13,
     color: 'black',
     fontFamily: 'serif',
     fontWeight:'bold'
@@ -42,6 +42,7 @@ export default StyleSheet.create({
     // marginVertical: 20,
     width: '100%',
     marginBottom:20,
+    marginBottom:30
     // paddingVertical: 15,
   },
   sectionTitle: {

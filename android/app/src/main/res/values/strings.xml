@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Awesome_project</string>
+    <string name="app_name">Booklish</string>
+    <string name="facebook_app_id">834690255102535</string>
 </resources>
